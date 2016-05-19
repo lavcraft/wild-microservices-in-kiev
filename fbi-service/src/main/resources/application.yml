@@ -1,3 +1,0 @@
-fbi-service:
-  ribbon:
-    listOfServers: localhost:8082

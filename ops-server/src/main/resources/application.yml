@@ -1,12 +1,10 @@
 spring:
-  application.name: gateway
+  application.name: ops
   sleuth:
-    enabled: true
-  zipkin:
-    base-url: http://ops-server.service.consul:9411
+    enabled: false
 
 server:
-  port: 9000
+  port: 9411
 
 zipkin:
   store:

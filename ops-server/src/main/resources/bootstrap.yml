@@ -1,13 +1,11 @@
 spring.cloud.consul.discovery.preferIpAddress: true
-spring.cloud.consul.discovery.enabled: true
+spring.cloud.consul.discovery.enabled: false
 
 spring.cloud.consul.host: 192.168.99.100
 zuul.ignoreLocalService: false
-spring.cloud.consul.discovery.lifecycle.enabled: false
-
 ---
 spring:
   profiles: consul
   application:
-    name: gateway-server
+    name: ops-server
 spring.cloud.consul.host: consul-server-8500.service.consul

@@ -1,14 +1,17 @@
-rabbitmq:
-  image: rabbitmq:management
-  ports:
-    - 9672:5672
-    - 15672
-
 gateway-server:
   image: gateway-server
   container_name: gateway-server
+  dns: 172.17.0.1
   ports:
     - "9000:9000"
+  restart: always
+
+ops-server:
+  image: ops-server
+  container_name: ops-server
+  dns: 172.17.0.1
+  ports:
+    - "9411:9411"
   restart: always
 
 consul:
@@ -30,35 +33,24 @@ registrator:
   command: "-ip 192.168.99.100 consul://192.168.99.100:8500"
   restart: always
 
-hippo-service:
-  image: hippo-service
+rent-service:
+  image: rent-service
   dns: 172.17.0.1
   ports:
     - "8080"
   environment:
-    - "SERVICE_NAME=hippo-service"
+    - "SERVICE_NAME=rent-service"
     - "SERVICE_CHECK_HTTP=/health"
     - "SPRING_PROFILES_ACTIVE=consul"
     - "SPRING_ZIPKIN_BASEURL=http://192.168.99.100:9000"
 
-parrot-service:
-  image: parrot-service
+payment-service:
+  image: payment-service
   dns: 172.17.0.1
   ports:
     - "8080"
   environment:
-    - "SERVICE_NAME=parrot-service"
-    - "SERVICE_CHECK_HTTP=/health"
-    - "SPRING_PROFILES_ACTIVE=consul"
-    - "SPRING_ZIPKIN_BASEURL=http://192.168.99.100:9000"
-
-fbi-service:
-  image: fbi-service
-  dns: 172.17.0.1
-  ports:
-    - "8080"
-  environment:
-    - "SERVICE_NAME=fbi-service"
+    - "SERVICE_NAME=payment-service"
     - "SERVICE_CHECK_HTTP=/health"
     - "SPRING_PROFILES_ACTIVE=consul"
     - "SPRING_ZIPKIN_BASEURL=http://192.168.99.100:9000"

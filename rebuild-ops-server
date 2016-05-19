@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./gradlew payment-service:dB
+./gradlew ops-server:dB
 docker-compose up -d

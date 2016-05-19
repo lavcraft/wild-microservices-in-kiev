@@ -1,0 +1,11 @@
+fbi-service:
+  ribbon:
+    listOfServers: localhost:8082
+spring:
+  application:
+    name: rent-service
+  zipkin:
+    base-url: http://ops-server.service.consul:9411
+
+logging:
+  level.org.springframework.cloud: DEBUG
