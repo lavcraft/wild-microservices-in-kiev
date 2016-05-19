@@ -1,0 +1,74 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.5.RELEASE")
+    classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.+'
+  }
+}
+
+group = "ru.jeeconf"
+version = "0.0.1"
+
+
+allprojects {
+  apply plugin: 'io.spring.dependency-management'
+  apply plugin: 'provided-base'
+
+  repositories {
+    jcenter()
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.cloud:spring-cloud-starter-parent:Brixton.RELEASE"
+    }
+
+    dependencies {
+      dependency 'org.projectlombok:lombok:1.16.8'
+      dependency 'org.codehaus.groovy:groovy-all:2.4.5'
+    }
+  }
+}
+
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'groovy'
+  apply plugin: 'idea'
+  apply plugin: 'spring-boot'
+
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  jar {
+    archiveName = project.name + ".jar"
+  }
+
+  dependencies {
+    compile 'org.codehaus.groovy:groovy-all'
+
+    compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
+    compile 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
+
+    provided 'org.projectlombok:lombok'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+  }
+
+  task dockerBuild << {
+    exec {
+      commandLine 'docker', 'build', '--force-rm=true', "--tag='${project.name}'", '.'
+    }
+  }
+
+  dockerBuild.dependsOn build
+
+  springBoot {
+    executable = true
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.13'
+}
