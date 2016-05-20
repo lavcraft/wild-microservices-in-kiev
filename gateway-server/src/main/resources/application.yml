@@ -3,7 +3,7 @@ spring:
   sleuth:
     enabled: true
   zipkin:
-    base-url: http://ops-server.service.consul:9411
+    base-url: http://192.168.99.100:9411
 
 server:
   port: 9000
@@ -13,6 +13,6 @@ zipkin:
     type: mem
 
 logging:
-  level.org.springframework.cloud: DEBUG
-
-logging.file: build/zipkin-server.log
+  level:
+    org.springframework.cloud: off
+    org.springframework.web: off

@@ -19,17 +19,17 @@ import java.util.concurrent.atomic.AtomicInteger
 @EnableDiscoveryClient
 @EnableHystrix
 @SpringBootApplication
-public class HippoApplication {
+public class RentApplication {
   public static final int DEFAULT_PADDING = 50
 
   public static void main(String[] args) {
     println 'Starting'.center(DEFAULT_PADDING, '=')
-    SpringApplication.run HippoApplication, args
+    SpringApplication.run RentApplication, args
     println 'Started'.center(DEFAULT_PADDING, '=')
   }
 
   @RestController
-  public static class HippoController {
+  public static class RentController {
     private AtomicInteger hippoCount = new AtomicInteger(Integer.MAX_VALUE);
 
     @Autowired
