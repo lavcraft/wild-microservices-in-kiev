@@ -5,6 +5,4 @@ dependencies {
   compile 'org.springframework.boot:spring-boot-starter-actuator'
   compile 'io.zipkin:zipkin-ui'
   compile 'io.zipkin.java:zipkin-server'
-
-  compile 'org.springframework.cloud:spring-cloud-starter-consul-all'
 }
