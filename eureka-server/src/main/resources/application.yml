@@ -1,12 +1,10 @@
 spring:
-  application.name: turbine
+  application.name: eureka-server
   sleuth:
     enabled: false
-  rabbitmq:
-    host: ${rabbitmq.host}
 
 server:
-  port: 9001
+  port: 8761
 
 logging:
   level.org.springframework.cloud: DEBUG

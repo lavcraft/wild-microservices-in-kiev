@@ -6,4 +6,5 @@ include 'payment-service'
 include 'gateway-server'
 include 'ops-server'
 include 'turbine-server'
+include 'eureka-server'
 //## end includes ######

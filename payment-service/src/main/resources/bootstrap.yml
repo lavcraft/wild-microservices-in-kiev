@@ -1,3 +1,18 @@
 spring.cloud.consul.discovery.preferIpAddress: true
 
 spring.cloud.consul.host: 192.168.99.100
+
+eureka:
+ client:
+  registryFetchIntervalSeconds: 5
+  healthcheck:
+   enabled: true
+  serviceUrl:
+   defaultZone: ${EUREKA_SERV:http://127.0.0.1:8762/eureka/}
+ instance:
+  leaseRenewalIntervalInSeconds: 10
+  appname: ${spring.application.name}
+  virtualHostName : ${spring.application.name}
+  metadataMap:
+   instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  prefer-ip-address: true

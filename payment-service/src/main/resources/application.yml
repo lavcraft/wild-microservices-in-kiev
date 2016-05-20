@@ -20,6 +20,5 @@ spring:
   rabbitmq:
     host: ${rabbitmq.host}
 
-
 logging:
   level.org.springframework.cloud: ERROR

@@ -3,6 +3,6 @@ spring.cloud.consul.discovery.preferIpAddress: true
 turbine:
   aggregator:
     clusterConfig: jeeconf
-  appConfig: rent-service, payment-service, gateway
+  appConfig: rent-service,payment-service,gateway
 
 spring.cloud.consul.host: 192.168.99.100

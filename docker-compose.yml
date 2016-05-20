@@ -5,6 +5,7 @@ gateway-server:
   ports:
     - "9000:9000"
   environment:
+    EUREKA_SERV: http://eureka:8761/eureka/
     RABBITMQ_HOST: rabbitmq
   links:
     - rent-service
@@ -12,6 +13,7 @@ gateway-server:
     - turbine-server
     - ops-server
     - rabbitmq
+    - eureka-server
   restart: always
 
 ops-server:
@@ -63,8 +65,10 @@ rent-service:
   links:
     - payment-service
     - rabbitmq
+    - eureka-server
   environment:
     RABBITMQ_HOST: rabbitmq
+    EUREKA_SERV: http://eureka:8761/eureka/
     SERVICE_NAME: rent-service
     SERVICE_CHECK_HTTP: /health
     SPRING_PROFILES_ACTIVE: consul
@@ -77,8 +81,10 @@ payment-service:
     - "8080"
   links:
     - rabbitmq
+    - eureka-server
   environment:
     RABBITMQ_HOST: rabbitmq
+    EUREKA_SERV: http://eureka:8761/eureka/
     SERVICE_NAME: payment-service
     SERVICE_CHECK_HTTP: /health
     SPRING_PROFILES_ACTIVE: consul
@@ -90,3 +96,15 @@ rabbitmq:
   ports:
     - "5672:5672"
     - "15672:15672"
+
+eureka-server:
+  image: eureka-server
+  dns: 172.17.0.1
+  hostname: eureka
+  ports:
+    - "8761:8761"
+  environment:
+    RABBITMQ_HOST: rabbitmq
+    SERVICE_NAME: eureka-service
+    SERVICE_CHECK_HTTP: /health
+    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
