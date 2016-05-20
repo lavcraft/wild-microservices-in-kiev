@@ -5,4 +5,5 @@ include 'rent-service'
 include 'payment-service'
 include 'gateway-server'
 include 'ops-server'
+include 'turbine-server'
 //## end includes ######

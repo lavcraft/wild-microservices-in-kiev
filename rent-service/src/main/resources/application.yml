@@ -1,11 +1,24 @@
-fbi-service:
-  ribbon:
-    listOfServers: localhost:8082
 spring:
   application:
     name: rent-service
   zipkin:
     base-url: http://192.168.99.100:9411
+  cloud:
+    inetutils:
+      ignored-interfaces:
+        - vbox*
+        - bridge*
+        - awd*
+        - lo*
+        - gif*
+        - stf*
+        - en1
+        - en2
+    consul:
+      discovery:
+        instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  rabbitmq:
+    host: ${rabbitmq.host}
 
 logging:
-  level.org.springframework.cloud: DEBUG
+  level.org.springframework.cloud: ERROR

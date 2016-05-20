@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.netflix.feign.EnableFeignClients
 import org.springframework.cloud.netflix.hystrix.EnableHystrix
+import org.springframework.context.annotation.Bean
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
@@ -28,12 +29,17 @@ public class RentApplication {
     println 'Started'.center(DEFAULT_PADDING, '=')
   }
 
+  @Bean
+  PaymentClient.PaymentClientFallback clientFallback() {
+    return new PaymentClient.PaymentClientFallback();
+  }
+
   @RestController
   public static class RentController {
     private AtomicInteger hippoCount = new AtomicInteger(Integer.MAX_VALUE);
 
     @Autowired
-    ParrotClient parrotClient
+    PaymentClient parrotClient
 
     @RequestMapping(value = '/rent', method = RequestMethod.GET)
     def rent(@RequestParam Optional<Integer> count) {
@@ -43,7 +49,7 @@ public class RentApplication {
 
       def fee = 0
       try {
-        ParrotClient.ParrotResponse feeResponse = parrotClient.getFee()
+        PaymentResponse feeResponse = parrotClient.getFee()
         fee = feeResponse.parrotFee
       } finally {
       }

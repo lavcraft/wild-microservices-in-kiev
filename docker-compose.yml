@@ -4,6 +4,14 @@ gateway-server:
   dns: 172.17.0.1
   ports:
     - "9000:9000"
+  environment:
+    RABBITMQ_HOST: rabbitmq
+  links:
+    - rent-service
+    - payment-service
+    - turbine-server
+    - ops-server
+    - rabbitmq
   restart: always
 
 ops-server:
@@ -12,6 +20,20 @@ ops-server:
   dns: 172.17.0.1
   ports:
     - "9411:9411"
+  restart: always
+
+turbine-server:
+  image: turbine-server
+  container_name: turbine-server
+  dns: 172.17.0.1
+  environment:
+    RABBITMQ_HOST: rabbitmq
+  links:
+    - rent-service
+    - payment-service
+    - rabbitmq
+  ports:
+    - "9001:9001"
   restart: always
 
 consul:
@@ -24,33 +46,47 @@ consul:
   command: "-bootstrap -advertise 192.168.99.100 -ui-dir /ui"
   restart: always
 
-registrator:
-  image: gliderlabs/registrator
-  container_name: registrator
-  net: "host"
-  volumes:
-    - "/var/run/docker.sock:/tmp/docker.sock"
-  command: "-ip 192.168.99.100 consul://192.168.99.100:8500"
-  restart: always
+#registrator:
+#  image: gliderlabs/registrator
+#  container_name: registrator
+#  net: "host"
+#  volumes:
+#    - "/var/run/docker.sock:/tmp/docker.sock"
+#  command: "-ip 192.168.99.100 consul://192.168.99.100:8500"
+#  restart: always
 
 rent-service:
   image: rent-service
   dns: 172.17.0.1
   ports:
     - "8080"
+  links:
+    - payment-service
+    - rabbitmq
   environment:
-    - "SERVICE_NAME=rent-service"
-    - "SERVICE_CHECK_HTTP=/health"
-    - "SPRING_PROFILES_ACTIVE=consul"
-    - "SPRING_ZIPKIN_BASEURL=http://192.168.99.100:9000"
+    RABBITMQ_HOST: rabbitmq
+    SERVICE_NAME: rent-service
+    SERVICE_CHECK_HTTP: /health
+    SPRING_PROFILES_ACTIVE: consul
+    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
 
 payment-service:
   image: payment-service
   dns: 172.17.0.1
   ports:
     - "8080"
+  links:
+    - rabbitmq
   environment:
-    - "SERVICE_NAME=payment-service"
-    - "SERVICE_CHECK_HTTP=/health"
-    - "SPRING_PROFILES_ACTIVE=consul"
-    - "SPRING_ZIPKIN_BASEURL=http://192.168.99.100:9000"
+    RABBITMQ_HOST: rabbitmq
+    SERVICE_NAME: payment-service
+    SERVICE_CHECK_HTTP: /health
+    SPRING_PROFILES_ACTIVE: consul
+    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
+
+rabbitmq:
+  image: rabbitmq:3-management
+  hostname: rabbitmq
+  ports:
+    - "5672:5672"
+    - "15672:15672"

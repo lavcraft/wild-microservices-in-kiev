@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./gradlew turbine-server:dB
+docker-compose up -d turbine-server

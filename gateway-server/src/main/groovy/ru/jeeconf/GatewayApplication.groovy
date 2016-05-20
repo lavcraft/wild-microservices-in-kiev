@@ -3,17 +3,21 @@ package ru.jeeconf
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import zipkin.server.EnableZipkinServer
+import org.springframework.cloud.netflix.hystrix.EnableHystrix
+import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy
 
 @SpringBootApplication
+@EnableZuulProxy
+@EnableHystrixDashboard
+@EnableHystrix
 @EnableDiscoveryClient
-@EnableZipkinServer
-public class Application {
+public class GatewayApplication {
     public static final int DEFAULT_PADDING = 50
 
     public static void main(String[] args) {
         println 'Starting'.center(DEFAULT_PADDING, '=')
-        SpringApplication.run Application, args
+        SpringApplication.run GatewayApplication, args
         println 'Started'.center(DEFAULT_PADDING, '=')
     }
 }

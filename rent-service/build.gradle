@@ -6,7 +6,11 @@ dependencies {
   compile 'org.springframework.cloud:spring-cloud-starter-feign'
   compile 'org.springframework.cloud:spring-cloud-starter-ribbon'
   compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
+
   compile 'org.springframework.cloud:spring-cloud-starter-hystrix'
+  compile 'org.springframework.cloud:spring-cloud-netflix-hystrix-stream'
+  compile 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
+
   compile 'org.springframework.cloud:spring-cloud-starter-consul-all'
 
 //  compile 'org.springframework.cloud:spring-cloud-starter-eureka'
