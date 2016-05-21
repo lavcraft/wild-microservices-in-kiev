@@ -1,5 +1,9 @@
 package ru.jeeconf;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.MediaType;
@@ -25,5 +29,14 @@ public interface PaymentClient {
       return new PaymentResponse(-1, "");
     }
 
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  class PaymentResponse {
+    int fee;
+    String hash;
   }
 }

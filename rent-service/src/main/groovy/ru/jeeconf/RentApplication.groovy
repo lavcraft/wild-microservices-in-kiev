@@ -53,11 +53,10 @@ public class RentApplication {
       def gen
       def ins
 
-      PaymentResponse feeResponse = paymentClient.payment()
+      PaymentClient.PaymentResponse feeResponse = paymentClient.payment()
       fee = feeResponse.fee
       ins = insuranceClient.insurance()
       gen = feeResponse.hash
-
 
       log.info('hippo end!!!')
 
