@@ -1,6 +1,6 @@
 spring:
   application:
-    name: rent-service
+    name: blockchain-service
   zipkin:
     base-url: http://192.168.99.100:9411
   cloud:
@@ -19,11 +19,6 @@ spring:
         instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   rabbitmq:
     host: ${rabbitmq.host}
-
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
-ribbon:
-  ConnectTimeout: 3000
-  ReadTimeout: 60000
 
 logging:
   level.org.springframework.cloud: ERROR

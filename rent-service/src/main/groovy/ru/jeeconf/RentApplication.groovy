@@ -42,6 +42,8 @@ public class RentApplication {
     PaymentClient parrotClient
     @Autowired
     SecurityClient securityClient
+    @Autowired
+    BlockchainClient blockchainClient
 
     @RequestMapping(value = '/rent', method = RequestMethod.GET)
     def rent(@RequestParam Optional<Integer> count) {
@@ -50,9 +52,12 @@ public class RentApplication {
       def hippoRequest = count.orElse(1)
 
       def fee = 0
+      def gen
       try {
         PaymentResponse feeResponse = parrotClient.getFee()
         fee = feeResponse.parrotFee
+        gen = blockchainClient.gen()
+
       } finally {
         securityClient.audit([fee: fee])
       }
@@ -60,7 +65,8 @@ public class RentApplication {
       log.info('hippo end!!!')
 
       return [hippoRemain: hippoCount.getAndAdd(-1 * hippoRequest),
-              parrot_fee : fee]
+              parrot_fee : fee,
+              hash       : gen]
     }
   }
 }
