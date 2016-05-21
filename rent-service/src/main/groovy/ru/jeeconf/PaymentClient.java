@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface PaymentClient {
 
   @RequestMapping(value = "/fee", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-  PaymentResponse getFee();
+  PaymentResponse payment();
 
   @Slf4j
   class PaymentClientFallback implements PaymentClient {
 
     @Override
-    public PaymentResponse getFee() {
+    public PaymentResponse payment() {
       log.warn("Use fallback");
       return new PaymentResponse(-1, "");
     }
