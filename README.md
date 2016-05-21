@@ -2,11 +2,11 @@
 
 ## Samples
 
- * custom spring-boot-thrift starter
- * custom spring-boot-thrift client with apache object pool
- * zuul with custom thrift filter for add authentication data to thrift objects
- * Hystrix dashboard in gateway-server, see http://{you_docker_machine_host}:9000/hystrix/
- * consule http://{you_docker_machine_host}:8500/
+ * five microservices that are called each other
+ * eureka server (or you may use consul with small changes) (http://{you_docker_machine_host}:8761/)
+ * gateway server with hystrix dashboard (see http://{you_docker_machine_host}:9000/hystrix/) and service routing
+ * ops server with open zipking tracing through sleuth (http://{you_docker_machine_host}:9411/)
+ * turbine server for colleting hystrix data from all services through rabbit-mq
 
 ## Build, run, rebuild
 
@@ -18,4 +18,4 @@ rebuild script redeploy app automatically
 
 example:
 
-    ./gradlew build && docker-compose up -d && ./rebuild-fbi-service
+    ./gradlew build && docker-compose up -d && ./rebuild-rent-service
