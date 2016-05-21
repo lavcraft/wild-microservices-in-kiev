@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./gradlew security-service:dB
+docker-compose up -d security-service

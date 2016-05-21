@@ -90,6 +90,22 @@ payment-service:
     SPRING_PROFILES_ACTIVE: consul
     SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
 
+security-service:
+  image: security-service
+  dns: 172.17.0.1
+  ports:
+    - "8080"
+  links:
+    - rabbitmq
+    - eureka-server
+  environment:
+    RABBITMQ_HOST: rabbitmq
+    EUREKA_SERV: http://eureka:8761/eureka/
+    SERVICE_NAME: security-service
+    SERVICE_CHECK_HTTP: /health
+    SPRING_PROFILES_ACTIVE: consul
+    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
+
 rabbitmq:
   image: rabbitmq:3-management
   hostname: rabbitmq

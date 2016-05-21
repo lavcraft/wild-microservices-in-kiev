@@ -40,6 +40,8 @@ public class RentApplication {
 
     @Autowired
     PaymentClient parrotClient
+    @Autowired
+    SecurityClient securityClient
 
     @RequestMapping(value = '/rent', method = RequestMethod.GET)
     def rent(@RequestParam Optional<Integer> count) {
@@ -52,6 +54,7 @@ public class RentApplication {
         PaymentResponse feeResponse = parrotClient.getFee()
         fee = feeResponse.parrotFee
       } finally {
+        securityClient.audit([fee: fee])
       }
 
       log.info('hippo end!!!')
