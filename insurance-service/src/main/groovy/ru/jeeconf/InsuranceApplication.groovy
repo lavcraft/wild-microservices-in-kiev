@@ -9,28 +9,24 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
-import java.util.concurrent.TimeUnit
-
 @Slf4j
 @RestController
 @EnableDiscoveryClient
 @EnableHystrix
 @SpringBootApplication
-public class BlockchainApplication {
+public class InsuranceApplication {
   public static final int DEFAULT_PADDING = 50
 
   public static void main(String[] args) {
     println 'Starting'.center(DEFAULT_PADDING, '=')
-    SpringApplication.run BlockchainApplication, args
+    SpringApplication.run InsuranceApplication, args
     println 'Started'.center(DEFAULT_PADDING, '=')
   }
 
-  @RequestMapping(value = '/gen', method = RequestMethod.GET)
-  String gen() {
-    log.info 'blockchain process'
+  @RequestMapping(value = '/fee', method = RequestMethod.GET)
+  int fee() {
+    log.info 'insurance process'
 
-    TimeUnit.MILLISECONDS.sleep 300
-
-    return UUID.randomUUID().toString()
+    return new Random().nextInt(100)
   }
 }

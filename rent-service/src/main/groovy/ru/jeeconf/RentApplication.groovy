@@ -39,11 +39,9 @@ public class RentApplication {
     private AtomicInteger hippoCount = new AtomicInteger(Integer.MAX_VALUE);
 
     @Autowired
-    PaymentClient parrotClient
+    PaymentClient paymentClient
     @Autowired
-    SecurityClient securityClient
-    @Autowired
-    BlockchainClient blockchainClient
+    InsuranceClient insuranceClient
 
     @RequestMapping(value = '/rent', method = RequestMethod.GET)
     def rent(@RequestParam Optional<Integer> count) {
@@ -53,19 +51,19 @@ public class RentApplication {
 
       def fee = 0
       def gen
-      try {
-        PaymentResponse feeResponse = parrotClient.getFee()
-        fee = feeResponse.parrotFee
-        gen = blockchainClient.gen()
+      def ins
 
-      } finally {
-        securityClient.audit([fee: fee])
-      }
+      PaymentResponse feeResponse = paymentClient.getFee()
+      fee = feeResponse.fee
+      ins = insuranceClient.insurance()
+      gen = feeResponse.hash
+
 
       log.info('hippo end!!!')
 
       return [hippoRemain: hippoCount.getAndAdd(-1 * hippoRequest),
               parrot_fee : fee,
+              ins        : ins,
               hash       : gen]
     }
   }

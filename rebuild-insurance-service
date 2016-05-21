@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./gradlew insurance-service:dB
+docker-compose up -d insurance-service
