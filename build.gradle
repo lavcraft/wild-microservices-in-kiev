@@ -61,7 +61,7 @@ subprojects {
 
   task dockerBuild << {
     exec {
-      commandLine 'docker', 'build', '--force-rm=true', "--tag='${project.name}'", '.'
+      commandLine 'docker', 'build', '--force-rm=true', "--tag=${project.name}", '.'
     }
   }
 
