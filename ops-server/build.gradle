@@ -3,6 +3,6 @@ version = '0.0.1'
 dependencies {
   compile 'org.springframework.boot:spring-boot-starter-web'
   compile 'org.springframework.boot:spring-boot-starter-actuator'
-  compile 'io.zipkin:zipkin-ui'
+  compile 'io.zipkin.java:zipkin-autoconfigure-ui'
   compile 'io.zipkin.java:zipkin-server'
 }
