@@ -7,7 +7,7 @@ gateway-server:
   environment:
     RABBITMQ_HOST: rabbitmq
     EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: rent-service
+    SERVICE_NAME: gateway-server
     SERVICE_CHECK_HTTP: /health
     SPRING_PROFILES_ACTIVE: consul
     SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
@@ -43,12 +43,19 @@ turbine-server:
   dns: 172.17.0.1
   environment:
     RABBITMQ_HOST: rabbitmq
+    EUREKA_SERV: http://eureka:8761/eureka/
+    SERVICE_NAME: turbine-server
+    SERVICE_CHECK_HTTP: /health
+    SPRING_PROFILES_ACTIVE: consul
+    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
   links:
     - rent-service
     - payment-service
     - rabbitmq
+    - eureka-server
   ports:
     - "9001:9001"
+    - "8989:8989"
   restart: always
 
 consul:
