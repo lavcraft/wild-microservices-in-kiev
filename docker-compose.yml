@@ -1,178 +1,191 @@
-gateway-server:
-  image: gateway-server
-  container_name: gateway-server
-  dns: 172.17.0.1
-  ports:
-    - "9000:9000"
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: gateway-server
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
-  links:
-    - rent-service
-    - payment-service
-    - turbine-server
-    - ops-server
-    - rabbitmq
-    - eureka-server
-  restart: always
+version: '2.1'
 
-ops-server:
-  image: ops-server
-  container_name: ops-server
-  dns: 172.17.0.1
-  ports:
-    - "9411:9411"
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: rent-service
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
-  links:
-    - eureka-server
-  restart: always
+services:
+  gateway-server:
+    image: gateway-server
+    container_name: gateway-server
+    ports:
+      - "9000:9000"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: gateway-server
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: gateway-server
+    links:
+      - rent-service
+      - payment-service
+      - turbine-server
+      - ops-server
+      - rabbitmq
+      - eureka-server
+    restart: always
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3
 
-turbine-server:
-  image: turbine-server
-  container_name: turbine-server
-  dns: 172.17.0.1
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: turbine-server
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
-  links:
-    - rent-service
-    - payment-service
-    - rabbitmq
-    - eureka-server
-  ports:
-    - "9001:9001"
-    - "8989:8989"
-  restart: always
+  turbine-server:
+    image: turbine-server
+    container_name: turbine-server
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: turbine-server
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: turbine-server
+    links:
+      - ops-server
+      - rent-service
+      - payment-service
+      - rabbitmq
+      - eureka-server
+    ports:
+      - "9001:9001"
+      - "8989:8989"
+    restart: always
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9001/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3
 
-consul:
-  image: gliderlabs/consul-server:0.5
-  container_name: consul
-  ports:
-    - "8400:8400"
-    - "8500:8500"
-    - "53:8600/udp"
-  command: "-bootstrap -advertise 192.168.99.100 -ui-dir /ui"
-  restart: always
+  rent-service:
+    image: rent-service
+    ports:
+      - "8080"
+    links:
+      - payment-service
+      - rabbitmq
+      - eureka-server
+      - ops-server
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: rent-service
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: rent-service
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3
 
-#registrator:
-#  image: gliderlabs/registrator
-#  container_name: registrator
-#  net: "host"
-#  volumes:
-#    - "/var/run/docker.sock:/tmp/docker.sock"
-#  command: "-ip 192.168.99.100 consul://192.168.99.100:8500"
-#  restart: always
+  payment-service:
+    image: payment-service
+    ports:
+      - "8080"
+    links:
+      - rabbitmq
+      - eureka-server
+      - ops-server
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: payment-service
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: payment-service
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3
 
-rent-service:
-  image: rent-service
-  dns: 172.17.0.1
-  ports:
-    - "8080"
-  links:
-    - payment-service
-    - rabbitmq
-    - eureka-server
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: rent-service
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
+  security-service:
+    image: security-service
+    ports:
+      - "8080"
+    links:
+      - rabbitmq
+      - eureka-server
+      - ops-server
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: security-service
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: security-service
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3
 
-payment-service:
-  image: payment-service
-  dns: 172.17.0.1
-  ports:
-    - "8080"
-  links:
-    - rabbitmq
-    - eureka-server
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: payment-service
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
+  blockchain-service:
+    image: blockchain-service
+    ports:
+      - "8080"
+    links:
+      - rabbitmq
+      - eureka-server
+      - ops-server
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: blockchain-service
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: blockchain-service
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3
 
-security-service:
-  image: security-service
-  dns: 172.17.0.1
-  ports:
-    - "8080"
-  links:
-    - rabbitmq
-    - eureka-server
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: security-service
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
-
-blockchain-service:
-  image: blockchain-service
-  dns: 172.17.0.1
-  ports:
-    - "8080"
-  links:
-    - rabbitmq
-    - eureka-server
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: blockchain-service
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
-
-insurance-service:
-  image: insurance-service
-  dns: 172.17.0.1
-  ports:
-    - "8080"
-  links:
-    - rabbitmq
-    - eureka-server
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    EUREKA_SERV: http://eureka:8761/eureka/
-    SERVICE_NAME: insurance-service
-    SERVICE_CHECK_HTTP: /health
-    SPRING_PROFILES_ACTIVE: consul
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
-
-rabbitmq:
-  image: rabbitmq:3-management
-  hostname: rabbitmq
-  ports:
-    - "5672:5672"
-    - "15672:15672"
-
-eureka-server:
-  image: eureka-server
-  dns: 172.17.0.1
-  hostname: eureka
-  ports:
-    - "8761:8761"
-  environment:
-    RABBITMQ_HOST: rabbitmq
-    SERVICE_NAME: eureka-service
-    SERVICE_CHECK_HTTP: /health
-    SPRING_ZIPKIN_BASEURL: http://192.168.99.100:9000
+  insurance-service:
+    image: insurance-service
+    ports:
+      - "8080"
+    links:
+      - rabbitmq
+      - eureka-server
+      - ops-server
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: insurance-service
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: insurance-service
+    depends_on:
+      - eureka-server
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3

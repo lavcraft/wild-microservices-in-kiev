@@ -1,4 +1,4 @@
-spring.cloud.consul.discovery.preferIpAddress: true
+spring.cloud.consul.discovery.preferIpAddress: false
 
 spring.cloud.consul.host: 192.168.99.100
 
@@ -13,6 +13,7 @@ eureka:
   leaseRenewalIntervalInSeconds: 10
   appname: ${spring.application.name}
   virtualHostName : ${spring.application.name}
+  hostname: ${ADVERTISED_HOSTNAME}
   metadataMap:
    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  prefer-ip-address: true
+  prefer-ip-address: false

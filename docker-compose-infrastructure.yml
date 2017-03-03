@@ -1,0 +1,52 @@
+version: '2.1'
+
+services:
+  eureka-server:
+    image: eureka-server
+    hostname: eureka
+    ports:
+      - "8761:8761"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      SERVICE_NAME: eureka-service
+      SERVICE_CHECK_HTTP: /health
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  ops-server:
+    image: ops-server
+    container_name: ops-server
+    ports:
+      - "9411:9411"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_SERV: http://eureka-server:8761/eureka/
+      SERVICE_NAME: ops-service
+      SERVICE_CHECK_HTTP: /health
+      SPRING_PROFILES_ACTIVE: consul
+      SPRING_ZIPKIN_BASEURL: http://ops-server:9411
+      ADVERTISED_HOSTNAME: ops-server
+    links:
+      - eureka-server
+      - rabbitmq
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9411/health"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 3

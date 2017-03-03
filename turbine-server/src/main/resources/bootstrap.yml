@@ -5,7 +5,7 @@ turbine:
     clusterConfig: jeeconf
   appConfig: rent-service,payment-service,gateway
 
-spring.cloud.consul.discovery.preferIpAddress: true
+spring.cloud.consul.discovery.preferIpAddress: false
 spring.cloud.consul.discovery.enabled: true
 
 spring.cloud.consul.host: 192.168.99.100
@@ -24,4 +24,4 @@ eureka:
   virtualHostName : ${spring.application.name}
   metadataMap:
    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  prefer-ip-address: true
+  prefer-ip-address: false
