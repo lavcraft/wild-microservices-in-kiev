@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./gradlew blockchain-service:dB
-docker-compose up -d blockchain-service
+./run up -d blockchain-service

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./gradlew eureka-server:dB
-docker-compose up -d eureka-server
+./run up -d eureka-server

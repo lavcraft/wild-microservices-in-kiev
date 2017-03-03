@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./gradlew ops-server:dB
-docker-compose up -d
+./run up -d

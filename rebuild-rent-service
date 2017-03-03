@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./gradlew rent-service:dB
-docker-compose up -d rent-service
+./run up -d rent-service

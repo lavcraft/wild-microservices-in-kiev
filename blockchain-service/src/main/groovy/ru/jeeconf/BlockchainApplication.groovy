@@ -29,7 +29,7 @@ public class BlockchainApplication {
   String gen() {
     log.info 'blockchain process'
 
-    TimeUnit.MILLISECONDS.sleep 300
+    TimeUnit.MILLISECONDS.sleep 5000
 
     return UUID.randomUUID().toString()
   }
