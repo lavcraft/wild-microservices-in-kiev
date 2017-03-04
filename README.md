@@ -11,8 +11,11 @@
 ## Build, run, rebuild
 
 build app:   `./gradlew build`
+
 build image: `./gradlew dockerBuild`
+
 run all:     `./run up -d`
+
 rebuild:     `./rebuild-{sub-project-name}`
 
 rebuild script redeploy app automatically
