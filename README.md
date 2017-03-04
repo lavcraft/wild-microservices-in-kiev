@@ -10,12 +10,13 @@
 
 ## Build, run, rebuild
 
-build: `./gradlew build`
-run: `docker-compose up -d`
-rebuild: `./rebuild-{sub-project-name}`
+build app:   `./gradlew build`
+build image: `./gradlew dockerBuild`
+run all:     `./run up -d`
+rebuild:     `./rebuild-{sub-project-name}`
 
 rebuild script redeploy app automatically
 
 example:
 
-    ./gradlew build && docker-compose up -d && ./rebuild-rent-service
+    ./gradlew build && ./run up -d && ./rebuild-rent-service
