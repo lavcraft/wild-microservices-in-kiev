@@ -25,9 +25,6 @@ services:
     depends_on:
       - eureka-server
       - rabbitmq
-    depends_on:
-      - eureka-server
-      - rabbitmq
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
       interval: 1m30s
